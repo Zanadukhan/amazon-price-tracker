@@ -12,21 +12,20 @@ header = {
 class PriceScraper:
     def __init__(self, url):
         try:
-            amazon_html = requests.get(url, headers=header).text
+            self.amazon_html = requests.get(url, headers=header).text
         except requests.exceptions.MissingSchema:
             print('Bad Url!')
             sys.exit()
-        else:
-            global soup
-            soup = BeautifulSoup(amazon_html, features='html.parser')
         self.current_price = 0
         self.item_name = ''
         self.url = url
 
     def get_price(self):
+        global soup
+        soup = BeautifulSoup(self.amazon_html, features='html.parser')
         whole_amount = soup.find(name='span', class_='a-price-whole').get_text().split('.')[0]
         fraction_amount = soup.find(name='span', class_='a-price-fraction').get_text()
-        # self.current_price += float(f'{whole_amount}.{fraction_amount}')
+        self.current_price += float(f'{whole_amount}.{fraction_amount}')
         return self.current_price
 
     def get_item_name(self):
